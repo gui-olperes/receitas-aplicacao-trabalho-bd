@@ -30,7 +30,7 @@ data_criacao = date.today()  # Obtém a data atual
 
 def get_db():
     if 'db' not in g:
-        g.db = pymysql.connect(host='localhost', user='root', password='1234', db='acervo_receitas', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+        g.db = pymysql.connect(host='localhost', user='user', password='password', db='db_name', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
     return g.db
 
 # Função para fechar a conexão de banco de dados no final da solicitação
