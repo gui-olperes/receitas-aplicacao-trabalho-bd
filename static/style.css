@@ -1,0 +1,151 @@
+
+
+    .progress-value {
+
+        padding: 4px 8px;
+        border-radius: 4px;
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+        /* Estilos adicionais conforme desejado */
+    }
+
+/* Estilo personalizado para o formulário de login */
+.btn-custom {
+    background-color: #FFA500; /* Cor laranja personalizada */
+    color: #fff; /* Cor do texto */
+    border-color: #FFA500; /* Cor da borda */
+    /* Adicione outros estilos personalizados, como tamanho de fonte, margem, etc., conforme necessário */
+}
+
+.btn-custom:hover {
+    background-color: #FF7F00; /* Cor laranja mais escura quando o botão está com o cursor em cima */
+    border-color: #FF7F00; /* Cor da borda ao passar o cursor */
+}
+
+/* Estilo personalizado para o footer */
+.footer-custom {
+    background-color: #E2BF63;
+    padding: 20px 0;
+    position: relative;
+    width: 100%;
+}
+
+/* Estilo para o corpo da página */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Isso garante que o corpo ocupe pelo menos toda a altura da viewport. */
+    margin: 0;
+}
+
+/* Estilo para o conteúdo da página */
+.container {
+    flex: 1;
+}
+
+/* No seu arquivo de estilo CSS ou dentro da tag <style> no cabeçalho do seu HTML */
+.selecao-flutuante {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    width: 300px;
+}
+
+.itens {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.item {
+    margin-bottom: 5px;
+}
+
+.item-selecionado {
+    font-weight: bold;
+}
+
+
+.book-cover {
+    background-image: linear-gradient(to top, #43c3fa, #ffffff); /* Gradiente de azul para branco */
+    width: 300px;
+    height: 450px;
+    border: 10px solid #ccc;
+    border-radius: 15px;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.author-section,
+.title-section,
+.bottom-section {
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Estilos para a área da nota */
+.nota-div {
+    border: 2px solid #43c3fa; /* Cor da borda ciano */
+    border-radius: 45px; /* Borda redonda */
+    padding: 10px; /* Espaçamento interno */
+    background-color: #f0f8ff; /* Cor de fundo */
+    width: fit-content; /* Define a largura conforme o conteúdo */
+}
+
+/* No seu arquivo de estilo CSS ou dentro de uma tag <style> */
+.card-image {
+    width: 100%; /* Define a largura máxima para ocupar o espaço do card */
+    height: 350px; /* Altura fixa para criar um formato quadrado */
+    object-fit: cover; /* Garante que a imagem cubra todo o espaço mantendo a proporção */
+}
+
+
+
+/* Estilos para o texto da nota */
+.nota {
+    /* Estilos adicionais para o texto, se necessário */
+}
+
+ /* Defina a altura das imagens dentro dos cards */
+    .card-img-top {
+        height: 200px; /* Ajuste a altura conforme necessário */
+        object-fit: cover; /* Garante que a imagem preencha o espaço, mantendo sua proporção */
+    }
+
+.btn {
+    font-size: 18px;
+    padding: 8px 16px;
+    margin: 0 4px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.cover-img {
+    margin-top:-50px;
+    width: 200px; /* Defina a largura desejada */
+
+
+    /* Outros estilos, se necessário */
+}

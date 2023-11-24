@@ -1,0 +1,147 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}
+    Novo Livro
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <form method="post" class="container" id="livroForm">
+        <div class="form-group">
+            <label for="titulo">Título:</label>
+            <input type="text" class="form-control" id="titulo" name="titulo" required>
+        </div>
+
+        <div class="form-group">
+            <label for="autor">Autor:</label>
+            <input type="text" class="form-control" id="autor" name="autor" required>
+        </div>
+        <div class="form-group">
+    <button class="btn btn-secondary" id="selecionarReceitasBtn">Selecionar Receitas</button>
+    <div class="modal" id="selecaoReceitasModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Selecionar Receitas</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="pesquisaReceitas" placeholder="Pesquisar receitas...">
+                    <div id="listaReceitas" class="mt-3">
+                        {% for receita in receitas %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="receita{{ receita.id_receita }}" name="receitas[]" value="{{ receita.id_receita }}">
+                                <label class="form-check-label" for="receita{{ receita.id_receita }}">
+                                    {{ receita.nome }}
+                                </label>
+                                <!-- Adicione o botão circular com ícone de seta para cada receita -->
+                                <a href="{{ url_for('receita', id=receita.id_receita) }}" class="btn btn-primary btn-sm rounded-circle">
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="salvarReceitasBtn">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="receitasSelecionadas"></div>
+
+<br/>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const selecaoReceitasModal = new bootstrap.Modal(document.getElementById("selecaoReceitasModal"));
+    const selecionarReceitasBtn = document.getElementById("selecionarReceitasBtn");
+    const pesquisaReceitas = document.getElementById("pesquisaReceitas");
+    const listaReceitas = document.getElementById("listaReceitas");
+    const salvarReceitasBtn = document.getElementById("salvarReceitasBtn");
+    const receitasSelecionadasDiv = document.getElementById("receitasSelecionadas");
+
+    const receitasSelecionadas = new Set();
+
+    selecionarReceitasBtn.addEventListener("click", function() {
+         event.preventDefault();
+        selecaoReceitasModal.show();
+    });
+
+    const livroForm = document.getElementById("livroForm");
+
+    livroForm.addEventListener("submit", function(event) {
+        // Verifica se pelo menos uma receita foi selecionada
+        if (receitasSelecionadas.size === 0) {
+            alert("Por favor, selecione pelo menos uma receita.");
+            event.preventDefault(); // Impede o envio do formulário
+        } else {
+            // Se pelo menos uma receita foi selecionada, continua com o envio do formulário
+            console.log("Receitas Selecionadas:", Array.from(receitasSelecionadas));
+            // Atualize a lista de receitas selecionadas na interface
+            atualizarListaReceitasSelecionadas();
+        }
+    });
+
+    salvarReceitasBtn.addEventListener("click", function() {
+        receitasSelecionadas.clear();
+        const checkboxesSelecionados = document.querySelectorAll("#listaReceitas input[type=checkbox]:checked");
+        checkboxesSelecionados.forEach(function(checkbox) {
+            receitasSelecionadas.add(checkbox.value);
+        });
+
+        console.log("Receitas Selecionadas:", Array.from(receitasSelecionadas));
+        // Atualize a lista de receitas selecionadas na interface
+        atualizarListaReceitasSelecionadas();
+        selecaoReceitasModal.hide();
+    });
+
+    pesquisaReceitas.addEventListener("input", function() {
+        const termoPesquisaReceitas = pesquisaReceitas.value.toLowerCase();
+        const receitas = listaReceitas.querySelectorAll('.form-check');
+
+        receitas.forEach(function(receita) {
+            const nomeReceita = receita.textContent.toLowerCase();
+            const receitaCheckbox = receita.querySelector('input[type="checkbox"]');
+            if (nomeReceita.includes(termoPesquisaReceitas)) {
+                receita.style.display = "block";
+            } else {
+                receita.style.display = "none";
+                receitaCheckbox.checked = false;
+            }
+        });
+    });
+
+    function atualizarListaReceitasSelecionadas() {
+        const listaReceitasSelecionadas = document.createElement("ul");
+        listaReceitasSelecionadas.classList.add("list-group"); // Adiciona a classe de lista do Bootstrap
+        receitasSelecionadasDiv.innerHTML = ""; // Limpa o conteúdo anterior
+
+        receitasSelecionadas.forEach(function(receitaId) {
+            const receitaNome = document.querySelector(`#receita${receitaId}`).nextElementSibling.textContent;
+            const elementoLista = document.createElement("li");
+            elementoLista.classList.add("list-group-item"); // Adiciona a classe de item de lista do Bootstrap
+            elementoLista.textContent = receitaNome;
+            listaReceitasSelecionadas.appendChild(elementoLista);
+        });
+
+        // Adicione a lista de receitas selecionadas à div de receitasSelecionadasDiv
+        receitasSelecionadasDiv.appendChild(listaReceitasSelecionadas);
+    }
+});
+</script>
+
+
+{% endblock %}

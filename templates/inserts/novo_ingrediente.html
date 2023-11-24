@@ -1,0 +1,18 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Novo Ingrediente{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Novo Ingrediente</h1>
+    <form method="post" class="container">
+
+        <div class="form-group">
+            <label for="nome">Nome do Ingrediente:</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ ingrediente.nome }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+{% endblock %}

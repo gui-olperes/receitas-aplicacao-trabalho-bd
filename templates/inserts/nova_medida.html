@@ -1,0 +1,24 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Nova Medida{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Novo medida</h1>
+    <form method="post" class="container">
+
+        <div class="form-group">
+            <label for="medida">Nome da medida:</label>
+            <input type="text" class="form-control" id="medida" name="medida" value="{{ medida.medida }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="sigla">Sigla da medida:</label>
+            <textarea class="form-control" id="sigla" name="sigla" rows="4" required>{{ medida.sigla }}</textarea>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+{% endblock %}

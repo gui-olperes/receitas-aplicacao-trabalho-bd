@@ -1,0 +1,111 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Receita: {{ receita.nome }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            {% if receita.imagem  %}
+                <img src="{{ url_for('static', filename=receita.imagem) }}" class="card-img-top img-fluid" alt="Imagem da Receita">
+            {% else %}
+                <img src="{{ url_for('static', filename='images/default.jpg') }}" class="card-img-top img-fluid" alt="Imagem Padrão">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h1 class="mb-4">Receita: {{ receita.nome }}</h1>
+            <p><strong>Categoria:</strong> {{ receita.categoria }}</p>
+            <h3 class="mt-4">Ingredientes</h3>
+            <ul>
+                {% for ingrediente in ingredientes %}
+                    <li>{{ ingrediente.ingrediente }} - {{ ingrediente.quantidade }} {{ ingrediente.medida }}</li>
+                {% endfor %}
+            </ul>
+            {% if receita.ind_receita_inedita %}
+                <p><strong>Receita Inédita</strong></p>
+            {% endif %}
+
+             {% if receita.nota != None %}
+            <p class="nota-div">{{ receita.nota }}</p>
+              {% endif %}
+        </div>
+    </div>
+    <div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Modo de Preparo</h3>
+        {% for step in receita.modo_preparo.split('\n') %}
+            <p>{{ step }}</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% if user_info.cargo_id == 9  or user_info.cargo_id == 8 %}
+  <!-- Botão para abrir o modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAdicionarNota">
+        Adicionar Nota
+    </button>
+{% endif %}
+    <br><br>
+  <!-- Modal para adicionar a nota -->
+<div class="modal fade" id="modalAdicionarNota" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarNotaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAdicionarNotaLabel">Adicionar Nota</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário para adicionar a nota -->
+                <form id="formNota">
+                    <div class="form-group">
+                        <!-- Removido o campo de ID da Receita -->
+                    </div>
+                    <div class="form-group">
+                        <label for="nota_modal">Nota:</label>
+                        <textarea class="form-control" id="nota_modal" rows="3" placeholder="Digite a nota"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar Nota</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+    // Ação quando o formulário é submetido
+    $('#formNota').submit(function(event) {
+        event.preventDefault(); // Evita o comportamento padrão do formulário
+
+        var novaNota = $('#nota_modal').val();
+        var idReceita = {{ receita.id_receita }}; // Recebe o ID da receita do Flask/Jinja2
+
+        // Envia a solicitação POST para a rota de adicionar nota
+        $.ajax({
+            url: '/adicionar_nota/' + idReceita, // Passa o ID da receita na URL
+            method: 'POST',
+            data: { nota: novaNota },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                    $('#modalAdicionarNota').modal('hide'); // Fecha o modal após adicionar a nota
+                } else {
+                    alert('Falha ao adicionar a nota.');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert('Erro ao enviar a solicitação. Detalhes: ' + errorThrown);
+            }
+        });
+    });
+});
+
+
+</script>
+
+
+{% endblock %}
+

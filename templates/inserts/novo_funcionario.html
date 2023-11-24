@@ -1,0 +1,39 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Novo Cargo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Novo Cargo</h1>
+    <form method="post" class="container">
+        <div class="form-group">
+            <label for="nome">Nome do Funcionario:</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ funcionario.nome }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="rg">RG:</label>
+            <input type="text" class="form-control" id="rg" name="rg" value="{{ funcionario.rg }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="salario">Salario:</label>
+            <input type="text" class="form-control" id="salario" name="salario" value="{{ funcionario.salario }}" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="data_ingresso">Data Ingresso:</label>
+                <input type="date" class="form-control" id="data_ingresso" name="data_ingresso" value="{{ funcionario.data_ingresso }}" required>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="nome_fantasia">Nome Fantasia:</label>
+                <input type="text" class="form-control" id="nome_fantasia" name="nome_fantasia" value="{{ funcionario.nome_fantasia }}" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar </button>
+    </form>
+</div>
+{% endblock %}

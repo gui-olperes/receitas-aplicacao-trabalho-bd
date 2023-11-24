@@ -1,0 +1,6 @@
+os
+functools
+flask
+flask_login
+werkzeug.security
+pymysql

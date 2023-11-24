@@ -1,0 +1,66 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Página de Índice{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Receitas</h1>
+    <!-- Botão para a página de criação de receita -->
+    {% if user_info.cargo_id == 9  or user_info.cargo_id == 13 %}
+    <!-- Mostra algo apenas para administradores -->
+    <a href="/nova_receita" class="btn btn-primary mb-3">Inserir Nova Receita</a>
+
+    {% endif %}
+    <!-- Formulário de pesquisa -->
+    <form method="get" action="/receitas" class="mb-4">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="Pesquisar Receitas" name="search" value="{{ request.args.get('search', '') }}">
+      <div class="input-group-append">
+    <select class="form-control" name="selected_category">
+        <option value="">Todas as Categorias</option>
+        {% for category in categories %}
+            <option value="{{ category }}" {% if request.args.get('selected_category') == category %}selected{% endif %}>{{ category }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+        <button type="submit" class="btn btn-secondary">Pesquisar</button>
+    </div>
+</form>
+
+    <!-- Lista de Receitas em Cards -->
+<div class="row">
+     {% for receita in receitas %}
+        <div class="col-md-6 mb-4">
+            <div class="card" style="width: 25rem;">
+                {% if receita.imagem %}
+                    <img src="{{ url_for('static', filename=receita.imagem) }}" class="card-img-top card-image" alt="Imagem da Receita">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/default.jpg') }}" class="card-img-top card-image" alt="Imagem Padrão">
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{ receita.nome }}</h5>
+                    <p class="card-text"><strong>Categoria:</strong> {{ receita.categoria }}</p>
+                    <p class="card-text"><strong>Quantidade de Porções:</strong> {{ receita.qtde_porcao }}</p>
+                    <!--{% if receita.ind_receita_inedita %}
+                        <p class="card-text"><strong>Receita Inédita</strong></p>
+                    {% endif %}-->
+                    <!-- Link para ver a receita completa -->
+                    <a href="{{ url_for('receita', id=receita.id_receita) }}" class="btn btn-primary">Ver Receita Completa</a>
+                    {% if user_info.cargo_id == 9  or user_info.cargo_id == 13 %}
+                                <div class="mt-2">
+                                    <a href="{{ url_for('editar_receita', id=receita.id_receita) }}" class="btn btn-primary">Editar</a>
+                                    <form method="POST" action="{{ url_for('remover_receita', id=receita.id_receita) }}" class="d-inline ml-2">
+                                        <button type="submit" class="btn btn-danger">Remover</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Lista de Medidas{% endblock %}
+
+{% block content %}
+
+    <h1>Lista de medidas</h1>
+    {% if user_info.cargo_id == 9  or user_info.cargo_id == 13 %}
+    <!-- Mostra algo apenas para administradores -->
+         <a href="{{ url_for('nova_medida') }}" class="btn btn-primary">Incluir Nova medida</a>
+    {% endif %}
+    <form method="GET" class="mt-3">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search" placeholder="Pesquisar...">
+            <button type="submit" class="btn btn-secondary">Pesquisar</button>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome da medida</th>
+                <th>Sigla</th>
+                  {% if user_info.cargo_id == 9  or user_info.cargo_id == 13 %}
+                    <th>Ação</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for medida in medidas %}
+            <tr>
+                <td>{{ medida.medida }}</td>
+                <td>{{ medida.sigla }}</td>
+                      {% if user_info.cargo_id == 9  or user_info.cargo_id == 13 %}
+                        <td>
+                            <a href="{{ url_for('editar_medida', id=medida.id_medida) }}" class="btn btn-primary">Editar</a>
+
+                             <form method="POST" action="{{ url_for('remover_medida', id=medida.id_medida) }}" class="d-inline ml-2">
+                                <button type="submit" class="btn btn-danger">Remover</button>
+                            </form>
+                        </td>
+                    {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

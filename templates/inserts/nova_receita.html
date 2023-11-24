@@ -1,0 +1,276 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Nova Receita{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Nova Receita</h1>
+    <form method="post" class="container" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="nome">Nome da Receita</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ receita.nome }}" required>
+        </div>
+
+        <div class="form-group">
+
+            <button class="btn btn-secondary" id="selecionarIngredientesBtn">Selecionar Ingredientes</button>
+            <div class="modal" id="selecaoIngredientesModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Selecionar Ingredientes</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control" id="pesquisaIngredientes" placeholder="Pesquisar ingredientes...">
+                            <div id="listaIngredientes" class="mt-3">
+    {% for ingrediente in ingredientes %}
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="ingrediente{{ ingrediente.id_ingrediente }}" name="ingredientes[]" value="{{ ingrediente.id_ingrediente }}">
+                    <label class="form-check-label" for="ingrediente{{ ingrediente.id_ingrediente }}">
+                        {{ ingrediente.nome }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="quantidadeIngrediente{{ ingrediente.id_ingrediente }}" name="quantidades[]" placeholder="Quantidade">
+            </div>
+            <div class="col-sm-3">
+
+
+
+             <div class="form-group">
+               <select class="form-control" id="medidaIngrediente{{ ingrediente.id_ingrediente }}" name="medidas[]">
+                <option value="" disabled selected>Medida</option>
+                {% for medida in medidas %}
+                    <option value="{{ medida.id_medida }}">{{ medida.sigla }}</option>
+                {% endfor %}
+            </select>
+
+            </div>
+
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="salvarIngredientesBtn">Salvar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Adicione este código dentro do seu formulário, abaixo do botão "Selecionar Ingredientes" -->
+<div id="ingredientesSelecionados"></div>
+<br>
+   <div class="form-group">
+    <button class="btn btn-secondary" id="selecionarCategoriasBtn">Selecionar Categorias</button>
+    <div class="modal" id="selecaoCategoriasModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Selecionar Categorias</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="pesquisaCategorias" placeholder="Pesquisar categorias...">
+                    <div id="listaCategorias" class="mt-3">
+                        {% for categoria in categorias %}
+                            <div class="form-check">
+                                <input class="form-check-input categoria-checkbox" type="checkbox" id="categoria{{ categoria.id_categoria }}" name="categorias[]" value="{{ categoria.id_categoria }}">
+                                 <label class="form-check-label" for="categoria{{ categoria.id_categoria }}">
+                                    {{ categoria.categoria }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="salvarCategoriasBtn">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="categoriasSelecionadas"></div>
+<br>
+
+        <div class="form-group">
+            <label for="modo_preparo">Modo de Preparo</label>
+            <textarea class="form-control" id="modo_preparo" name="modo_preparo" rows="4" value="{{ receita.modo_preparo }}" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="qtde_porcao">Quantidade de Porções</label>
+            <input type="number" class="form-control" id="qtde_porcao" name="qtde_porcao" value="{{ receita.qtde_porcao }}" required>
+        </div>
+        <div class="form-group">
+            <label for="imagem">Imagem da Receita</label>
+            <input type="file" class="form-control-file" id="imagem" name="imagem">
+        </div>
+
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="ind_receita_inedita" name="ind_receita_inedita" value="1">
+            <label class="form-check-label" for="ind_receita_inedita">Receita Inédita</label>
+            <!-- Campo oculto para enviar o valor 0 quando o checkbox não estiver marcado -->
+            <input type="hidden" name="ind_receita_inedita" value="0">
+        </div>
+
+        <br>
+        <button type="submit" class="btn btn-primary">Salvar </button>
+    </form>
+</div>
+<br>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const selecaoIngredientesModal = new bootstrap.Modal(document.getElementById("selecaoIngredientesModal"));
+    const selecionarIngredientesBtn = document.getElementById("selecionarIngredientesBtn");
+    const pesquisaIngredientes = document.getElementById("pesquisaIngredientes");
+    const listaIngredientes = document.getElementById("listaIngredientes");
+    const salvarIngredientesBtn = document.getElementById("salvarIngredientesBtn");
+    const ingredientesSelecionadosDiv = document.getElementById("ingredientesSelecionados");
+
+
+    const selecaoCategoriasModal = new bootstrap.Modal(document.getElementById("selecaoCategoriasModal"));
+    const selecionarCategoriasBtn = document.getElementById("selecionarCategoriasBtn");
+    const pesquisaCategorias = document.getElementById("pesquisaCategorias");
+    const listaCategorias = document.getElementById("listaCategorias");
+    const salvarCategoriasBtn = document.getElementById("salvarCategoriasBtn");
+    const categoriasSelecionadasDiv = document.getElementById("categoriasSelecionadas");
+
+    const ingredientesSelecionados = new Set();
+    const categoriasSelecionadas = new Set();
+
+    selecionarIngredientesBtn.addEventListener("click", function() {
+         event.preventDefault();
+        selecaoIngredientesModal.show();
+
+    });
+
+    salvarIngredientesBtn.addEventListener("click", function() {
+    ingredientesSelecionados.clear();
+    const checkboxesSelecionados = document.querySelectorAll("#listaIngredientes input[type=checkbox]:checked");
+    checkboxesSelecionados.forEach(function(checkbox) {
+        ingredientesSelecionados.add(checkbox.value);
+    });
+
+    console.log("Ingredientes Selecionados:", Array.from(ingredientesSelecionados));
+    // Atualize a lista de ingredientes selecionados na interface
+    atualizarListaIngredientesSelecionados();
+    selecaoIngredientesModal.hide(); // Feche o modal após salvar
+
+});
+
+
+    selecionarCategoriasBtn.addEventListener("click", function() {
+        event.preventDefault();
+        selecaoCategoriasModal.show();
+
+    });
+
+    salvarCategoriasBtn.addEventListener("click", function() {
+        categoriasSelecionadas.clear();
+        const checkboxesSelecionados = document.querySelectorAll("#listaCategorias input[type=checkbox]:checked");
+        checkboxesSelecionados.forEach(function(checkbox) {
+            categoriasSelecionadas.add(checkbox.value);
+        });
+
+        console.log("Categorias Selecionadas:", Array.from(categoriasSelecionadas));
+        // Atualize a lista de categorias selecionadas na interface
+        atualizarListaCategoriasSelecionadas();
+        selecaoCategoriasModal.hide();
+    });
+
+    pesquisaIngredientes.addEventListener("input", function() {
+        const termoPesquisaIngredientes = pesquisaIngredientes.value.toLowerCase();
+        const ingredientes = listaIngredientes.querySelectorAll('.form-check');
+
+        ingredientes.forEach(function(ingrediente) {
+            const nomeIngrediente = ingrediente.textContent.toLowerCase();
+            const ingredienteCheckbox = ingrediente.querySelector('input[type="checkbox"]');
+            if (nomeIngrediente.includes(termoPesquisaIngredientes)) {
+                ingrediente.style.display = "block";
+            } else {
+                ingrediente.style.display = "none";
+                ingredienteCheckbox.checked = false;
+            }
+        });
+    });
+
+    pesquisaCategorias.addEventListener("input", function() {
+        const termoPesquisaCategorias = pesquisaCategorias.value.toLowerCase();
+        const categorias = listaCategorias.querySelectorAll('.form-check');
+
+        categorias.forEach(function(categoria) {
+            const nomeCategoria = categoria.textContent.toLowerCase();
+            const categoriaCheckbox = categoria.querySelector('input[type="checkbox"]');
+            if (nomeCategoria.includes(termoPesquisaCategorias)) {
+                categoria.style.display = "block";
+            } else {
+                categoria.style.display = "none";
+                categoriaCheckbox.checked = false;
+            }
+        });
+    });
+
+    function atualizarListaIngredientesSelecionados() {
+    const listaIngredientesSelecionados = document.createElement("ul");
+    ingredientesSelecionadosDiv.innerHTML = ""; // Limpa o conteúdo anterior
+
+    // Convertendo o conjunto de ingredientes selecionados em um array para poder usar reverse() e forEach()
+    const ingredientesArray = Array.from(ingredientesSelecionados).reverse();
+
+     ingredientesArray.forEach(function(ingredienteId) {
+        const quantidadeIngrediente = document.querySelector(`#quantidadeIngrediente${ingredienteId}`).value;
+        const medidaIngredienteSelect = document.querySelector(`#medidaIngrediente${ingredienteId}`);
+        const medidaIngredienteId = medidaIngredienteSelect.value; // Obter o ID da medida selecionada
+        const medidaIngrediente = medidaIngredienteSelect.options[medidaIngredienteSelect.selectedIndex].text;
+        const ingredienteNome = document.querySelector(`#ingrediente${ingredienteId}`).nextElementSibling.textContent;
+
+
+        const elementoLista = document.createElement("li");
+        elementoLista.classList.add("list-group-item");
+        elementoLista.textContent = `${ingredienteNome} - ${quantidadeIngrediente} ${medidaIngrediente}`;
+        listaIngredientesSelecionados.appendChild(elementoLista);
+    });
+
+    // Adicione a lista de ingredientes selecionados à div de ingredientesSelecionadosDiv
+    ingredientesSelecionadosDiv.appendChild(listaIngredientesSelecionados);
+}
+
+
+
+    function atualizarListaCategoriasSelecionadas() {
+    const listaCategoriasSelecionadas = document.createElement("ul");
+    listaCategoriasSelecionadas.classList.add("list-group"); // Adiciona a classe de lista do Bootstrap
+    categoriasSelecionadasDiv.innerHTML = ""; // Limpa o conteúdo anterior
+
+    categoriasSelecionadas.forEach(function(categoriaId) {
+        const categoriaNome = document.querySelector(`#categoria${categoriaId}`).nextElementSibling.textContent;
+        const elementoLista = document.createElement("li");
+        elementoLista.classList.add("list-group-item"); // Adiciona a classe de item de lista do Bootstrap
+        elementoLista.textContent = categoriaNome;
+        listaCategoriasSelecionadas.appendChild(elementoLista);
+    });
+
+    // Adicione a lista de categorias selecionadas à div de categoriasSelecionadasDiv
+    categoriasSelecionadasDiv.appendChild(listaCategoriasSelecionadas);
+}
+
+
+
+});
+
+</script>
+{% endblock %}

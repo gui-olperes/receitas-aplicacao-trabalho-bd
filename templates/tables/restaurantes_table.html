@@ -1,0 +1,48 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Lista de Restaurantes{% endblock %}
+
+{% block content %}
+
+    <h1>Lista de Restaurantes</h1>
+    {% if user_info.cargo_id == 9 %}
+    <!-- Mostra algo apenas para administradores -->
+         <a href="{{ url_for('novo_restaurante') }}" class="btn btn-primary">Incluir Novo Restaurante</a>
+    {% endif %}
+    <form method="GET" class="mt-3">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search" placeholder="Pesquisar...">
+            <button type="submit" class="btn btn-secondary">Pesquisar</button>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome do Restaurante</th>
+                <th>Nome Fantasia</th>
+                <th>Contato</th>
+                {% if user_info.cargo_id == 9 %}
+                    <th>Ação</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for restaurante in restaurantes %}
+            <tr>
+                <td>{{ restaurante.nome }}</td>
+                <td>{{ restaurante.fantasia }}</td>
+                <td>{{ restaurante.contato }}</td>
+                    {% if user_info.cargo_id == 9 %}
+                        <td>
+                            <a href="{{ url_for('editar_restaurante', id=restaurante.id_restaurante) }}" class="btn btn-primary">Editar</a>
+
+                             <form method="POST" action="{{ url_for('remover_restaurante', id=restaurante.id_restaurante) }}" class="d-inline ml-2">
+                                <button type="submit" class="btn btn-danger">Remover</button>
+                            </form>
+                        </td>
+                    {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}Página de Índice{% endblock %}
+<!-- Incluindo o CSS do Font Awesome (substitua {versão} pela versão desejada) -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/{versão}/css/all.min.css" rel="stylesheet">
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Livros</h1>
+    <!-- Botão para a página de criação de receita -->
+    {% if user_info.cargo_id == 9 %}
+    <!-- Mostra algo apenas para administradores -->
+    <a href="/novo_livro" class="btn btn-primary mb-3">Inserir Novo Livro</a>
+    {% endif %}
+    <!-- Formulário de pesquisa -->
+    <form method="get" action="/" class="mb-4">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="Pesquisar Receitas" name="search" value="{{ request.args.get('search', '') }}">
+
+        <button type="submit" class="btn btn-secondary">Pesquisar</button>
+    </div>
+</form>
+
+</div>
+<div class="row">
+
+
+</div>
+<div class="row">
+    {% for livro in livros %}
+        <div class="col-md-6 mb-4">
+            <div class="book-cover d-flex justify-content-center align-items-center">
+                <img src="{{ url_for('static', filename='images/livro_capa.png') }}" alt="Logo da Minha Aplicação" class="cover-img">
+
+                <div class="author-section">
+                    <h2>{{ livro.autor }}</h2>
+                </div>
+                <div class="title-section">
+                    <h1>{{ livro.titulo }}</h1>
+                </div>
+                {% if user_info.cargo_id == 9 %}
+                <div class="bottom-section">
+                    <!-- Ícone de lixeira usando Font Awesome -->
+                        <form method="POST" action="{{ url_for('remover_livro', id=livro.id_livro) }}" class="d-inline ml-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> <!-- Ícone de lixeira -->
+                            </button>
+                        </form>
+{% endif %}
+                        <!-- Ícone de download usando Font Awesome -->
+                        <form method="GET" action="{{ url_for('gerar_pdf', livro_id=livro.id_livro) }}" class="d-inline ml-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-download"></i> <!-- Ícone de download -->
+                            </button>
+                        </form>
+
+                </div>
+
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Ao clicar no botão "Salvar Nota" no modal
+        $('#salvarNotaBtn').click(function() {
+            var idReceita = 'ID_DA_RECEITA_AQUI'; // Substitua 'ID_DA_RECEITA_AQUI' pelo ID correto da receita
+
+            var novaNota = $('#notaInput').val();
+
+            // Envia a solicitação POST para a rota de adicionar nota
+            $.ajax({
+                url: '/adicionar_nota',
+                method: 'POST',
+                data: { id_receita: idReceita, nota: novaNota },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Nota adicionada com sucesso.');
+                        $('#modalInserirNota').modal('hide'); // Fecha o modal após adicionar a nota
+                    } else {
+                        alert('Falha ao adicionar a nota.');
+                    }
+                },
+                error: function() {
+                    alert('Erro ao enviar a solicitação.');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
